@@ -4,8 +4,8 @@ namespace OfxParser\Entities;
 
 class SignOn extends AbstractEntity
 {
-    public $status;
+    public $Status;
     public $date;
     public $language;
-    public $institute;
+    public $Institute;
 }

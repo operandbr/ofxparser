@@ -9,6 +9,6 @@ class BankAccount extends AbstractEntity
     public $balance;
     public $balanceDate;
     public $routingNumber;
-    public $statement;
+    public $Statement;
     public $transactionUid;
 }
