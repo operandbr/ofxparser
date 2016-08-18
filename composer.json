@@ -14,6 +14,9 @@
     }, {
         "name": "Oliver Lowe",
         "email": "mrtriangle@gmail.com"
+    }, {
+        "name": "Otávio Augusto Borges Pinto",
+        "email": "otaviobpinto@gmail.com"
     }],
     "require": {
         "php": ">=5.4"
