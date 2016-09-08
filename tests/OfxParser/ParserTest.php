@@ -128,10 +128,11 @@ HERE
         self::assertEquals($expected, $method->invoke(new Parser, $sgml));
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testLoadFromFileWhenFileDoesNotExist()
     {
-        $this->expectException(\InvalidArgumentException::class);
-
         $parser = new Parser();
         $parser->loadFromFile('a non-existent file');
     }

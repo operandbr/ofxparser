@@ -219,7 +219,7 @@ class Ofx
             $transaction = new Transaction();
             $transaction->type = (string)$t->TRNTYPE;
             $transaction->date = $this->createDateTimeFromStr($t->DTPOSTED);
-            $transaction->amount = $this->createAmountFromStr($t->TRNAMT);
+            $transaction->amount = $this->createAmountFromStr(trim($t->TRNAMT));
             $transaction->uniqueId = (string)$t->FITID;
             $transaction->name = (string)$t->NAME;
             $transaction->memo = (string)$t->MEMO;
