@@ -15,9 +15,6 @@
         "name": "Oliver Lowe",
         "email": "mrtriangle@gmail.com"
     }],
-    "require": {
-        "php": "~5.5"
-    },
     "require-dev": {
         "phpunit/phpunit": "~4.8",
         "squizlabs/php_codesniffer": "~2.6"
