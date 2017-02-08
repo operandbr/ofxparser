@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+    php:
+        image: tuxmate/php:5.5.9
+        tty: true
+        environment:
+            - TERM=xterm
+        volumes:
+            - ./docker/php/www.conf:/etc/php5/fpm/pool.d/www.conf
+            - ./docker/php/php.ini:/etc/php5/fpm/php.ini
+            - ./../ofxparser:/www/ofxparser
