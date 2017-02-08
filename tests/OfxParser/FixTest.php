@@ -2,8 +2,6 @@
 
 namespace OfxParserTest;
 
-use OfxParser\Fix;
-
 /**
  * @covers OfxParser\Fix
  */
@@ -23,6 +21,19 @@ class FixTest extends \PHPUnit_Framework_TestCase
             ->method('getFileContent')
             ->willReturn("<DTSTART>$startDate");
 
-        $class->fixStartDate($startDate, '20000101100000');
+        $this->assertTrue(
+            method_exists($class, 'replaceStartDate'),
+            'Method "replaceStartDate()" must exist'
+        );
+
+        $testReturn = $class->replaceStartDate($startDate, '20000101100000');
+
+        $expectedInstance = 'OfxParser\Fix';
+
+        $this->assertInstanceOf(
+            $expectedInstance,
+            $testReturn,
+            'It must return an instance of ' . $expectedInstance
+        );
     }
 }

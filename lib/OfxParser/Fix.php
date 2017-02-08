@@ -14,7 +14,7 @@ class Fix
         $this->file = $file;
     }
 
-    public function fixStartDate($search, $replace = '20000101100000')
+    public function replaceStartDate($search, $replace = '20000101100000')
     {
         $fileContent = $this->getFileContent($this->file);
 
@@ -25,6 +25,8 @@ class Fix
         );
 
         $this->saveFileContent($this->file, $fileContent);
+
+        return $this;
     }
 
     protected function getFileContent($file)
