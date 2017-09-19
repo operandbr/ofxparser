@@ -66,6 +66,10 @@ class OfxTest extends \PHPUnit_Framework_TestCase
 
         $Ofx = new Ofx($this->ofxData);
 
+        // Test empty OFX Date Format
+        $DateTimeZero = $method->invoke($Ofx, '');
+        self::assertEquals((new \DateTime(date('Ymd')))->getTimestamp(), $DateTimeZero->getTimestamp());
+
         // Test OFX Date Format YYYYMMDDHHMMSS.XXX[gmt offset:tz name]
         $DateTimeOne = $method->invoke($Ofx, '20081005132200.124[-5:EST]');
         self::assertEquals($expectedDateTime->getTimestamp(), $DateTimeOne->getTimestamp());

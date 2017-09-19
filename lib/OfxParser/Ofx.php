@@ -261,6 +261,10 @@ class Ofx
      */
     private function createDateTimeFromStr($dateString, $ignoreErrors = false)
     {
+        if (empty($dateString)) {
+            $dateString = (new \DateTime())->format('Ymd');
+        }
+
         $regex = '/'
             . "(\d{4})(\d{2})(\d{2})?"     // YYYYMMDD             1,2,3
             . "(?:(\d{2})(\d{2})(\d{2}))?" // HHMMSS   - optional  4,5,6
