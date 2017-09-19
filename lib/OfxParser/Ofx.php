@@ -261,7 +261,7 @@ class Ofx
      */
     private function createDateTimeFromStr($dateString, $ignoreErrors = false)
     {
-        if (empty($dateString)) {
+        if (empty((string) $dateString)) {
             $dateString = (new \DateTime())->format('Ymd');
         }
 
