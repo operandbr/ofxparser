@@ -38,6 +38,12 @@ class OfxTest extends \PHPUnit_Framework_TestCase
             '1' => ['1', 1.0],
             '10' => ['10', 10.0],
             '100' => ['100', 1.0], // @todo this is weird behaviour, should not really expect this
+            '+1' => ['+1', 1.0],
+            '+10' => ['+10', 10.0],
+            '+1000.00' => ['+1000.00', 1000.0],
+            '+1000,00' => ['+1000,00', 1000.0],
+            '+1,000.00' => ['+1,000.00', 1000.0],
+            '+1.000,00' => ['+1.000,00', 1000.0],
         ];
     }
 
@@ -178,6 +184,7 @@ class OfxTest extends \PHPUnit_Framework_TestCase
             self::assertEquals($expectedTransactions[$i]['sic'], $transaction->sic);
             self::assertEquals($expectedTransactions[$i]['checkNumber'], $transaction->checkNumber);
             self::assertInstanceOf('DateTime', $transaction->date);
+            self::assertInstanceOf('DateTime', $transaction->userInitiatedDate);
         }
     }
 }

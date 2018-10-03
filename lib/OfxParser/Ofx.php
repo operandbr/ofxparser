@@ -147,32 +147,47 @@ class Ofx
         // Loop through the bank accounts
         $bankAccounts = [];
         foreach ($xml->BANKMSGSRSV1->STMTTRNRS as $accountStatement) {
-            $bankAccounts[] = $this->buildBankAccount($accountStatement);
+            foreach ($accountStatement->STMTRS as $statementResponse) {
+                $bankAccounts[] = $this->buildBankAccount($accountStatement->TRNUID, $statementResponse);
+            }
         }
         return $bankAccounts;
     }
 
     /**
-     * @param SimpleXMLElement $xml
+     * @param string $transactionUid
+     * @param SimpleXMLElement $statementResponse
      * @return BankAccount
      * @throws \Exception
      */
-    private function buildBankAccount(SimpleXMLElement $xml)
+    private function buildBankAccount($transactionUid, SimpleXMLElement $statementResponse)
     {
         $bankAccount = new BankAccount();
-        $bankAccount->transactionUid = $xml->TRNUID;
-        $bankAccount->agencyNumber = $xml->STMTRS->BANKACCTFROM->BRANCHID;
-        $bankAccount->accountNumber = $xml->STMTRS->BANKACCTFROM->ACCTID;
-        $bankAccount->routingNumber = $xml->STMTRS->BANKACCTFROM->BANKID;
-        $bankAccount->accountType = $xml->STMTRS->BANKACCTFROM->ACCTTYPE;
-        $bankAccount->balance = $xml->STMTRS->LEDGERBAL->BALAMT;
-        $bankAccount->balanceDate = $this->createDateTimeFromStr($xml->STMTRS->LEDGERBAL->DTASOF, true);
+        $bankAccount->transactionUid = $transactionUid;
+        $bankAccount->agencyNumber = $statementResponse->BANKACCTFROM->BRANCHID;
+        $bankAccount->accountNumber = $statementResponse->BANKACCTFROM->ACCTID;
+        $bankAccount->routingNumber = $statementResponse->BANKACCTFROM->BANKID;
+        $bankAccount->accountType = $statementResponse->BANKACCTFROM->ACCTTYPE;
+        $bankAccount->balance = $statementResponse->LEDGERBAL->BALAMT;
+        $bankAccount->balanceDate = $this->createDateTimeFromStr(
+            $statementResponse->LEDGERBAL->DTASOF,
+            true
+        );
 
         $bankAccount->statement = new Statement();
-        $bankAccount->statement->currency = $xml->STMTRS->CURDEF;
-        $bankAccount->statement->startDate = $this->createDateTimeFromStr($xml->STMTRS->BANKTRANLIST->DTSTART);
-        $bankAccount->statement->endDate = $this->createDateTimeFromStr($xml->STMTRS->BANKTRANLIST->DTEND);
-        $bankAccount->statement->transactions = $this->buildTransactions($xml->STMTRS->BANKTRANLIST->STMTTRN);
+        $bankAccount->statement->currency = $statementResponse->CURDEF;
+
+        $bankAccount->statement->startDate = $this->createDateTimeFromStr(
+            $statementResponse->BANKTRANLIST->DTSTART
+        );
+
+        $bankAccount->statement->endDate = $this->createDateTimeFromStr(
+            $statementResponse->BANKTRANLIST->DTEND
+        );
+
+        $bankAccount->statement->transactions = $this->buildTransactions(
+            $statementResponse->BANKTRANLIST->STMTTRN
+        );
 
         return $bankAccount;
     }
@@ -219,6 +234,9 @@ class Ofx
             $transaction = new Transaction();
             $transaction->type = (string)$t->TRNTYPE;
             $transaction->date = $this->createDateTimeFromStr($t->DTPOSTED);
+            if ('' !== (string)$t->DTUSER) {
+                $transaction->userInitiatedDate = $this->createDateTimeFromStr(trim($t->DTUSER));
+            }
             $transaction->amount = $this->createAmountFromStr(trim($t->TRNAMT));
             $transaction->uniqueId = (string)$t->FITID;
             $transaction->name = (string)$t->NAME;
@@ -311,7 +329,7 @@ class Ofx
     private function createAmountFromStr($amountString)
     {
         // Decimal mark style (UK/US): 000.00 or 0,000.00
-        if (preg_match('/^-?([\d,]+)(\.?)([\d]{2})$/', $amountString) === 1) {
+        if (preg_match('/^(-|\+)?([\d,]+)(\.?)([\d]{2})$/', $amountString) === 1) {
             return (float)preg_replace(
                 ['/([,]+)/', '/\.?([\d]{2})$/'],
                 ['', '.$1'],
@@ -320,7 +338,7 @@ class Ofx
         }
 
         // European style: 000,00 or 0.000,00
-        if (preg_match('/^-?([\d\.]+,?[\d]{2})$/', $amountString) === 1) {
+        if (preg_match('/^(-|\+)?([\d\.]+,?[\d]{2})$/', $amountString) === 1) {
             return (float)preg_replace(
                 ['/([\.]+)/', '/,?([\d]{2})$/'],
                 ['', '.$1'],

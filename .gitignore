@@ -1,4 +1,6 @@
-.idea
+*.sublime-project
+*.sublime-workspace
 .DS_Store
-vendor
+.idea
 composer.lock
+vendor
