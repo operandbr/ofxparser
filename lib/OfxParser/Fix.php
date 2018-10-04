@@ -38,4 +38,15 @@ class Fix
     {
         file_put_contents($file, $content);
     }
+
+    public function removeSpecialChars()
+    {
+        $fileContent = $this->getFileContent($this->file);
+
+        $fileContent = str_replace('&', 'e', $fileContent);
+
+        $this->saveFileContent($this->file, $fileContent);
+
+        return $this;
+    }
 }
