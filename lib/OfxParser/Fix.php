@@ -8,44 +8,42 @@ namespace OfxParser;
 class Fix
 {
     private $file;
+    private $fileContent;
 
     public function __construct($file)
     {
         $this->file = $file;
+        $this->fileContent = $this->getFileContent();
     }
 
     public function replaceStartDate($search, $replace = '20000101100000')
     {
-        $fileContent = $this->getFileContent($this->file);
-
-        $fileContent = str_replace(
+        $this->fileContent = str_replace(
             '<DTSTART>' . $search,
             '<DTSTART>' . $replace,
-            $fileContent
+            $this->fileContent
         );
 
-        $this->saveFileContent($this->file, $fileContent);
+        $this->saveFileContent();
 
         return $this;
     }
 
-    protected function getFileContent($file)
+    protected function getFileContent()
     {
-        return file_get_contents($file);
+        return file_get_contents($this->file);
     }
 
-    protected function saveFileContent($file, $content)
+    protected function saveFileContent()
     {
-        file_put_contents($file, $content);
+        file_put_contents($this->file, $this->fileContent);
     }
 
     public function removeSpecialChars()
     {
-        $fileContent = $this->getFileContent($this->file);
+        $this->fileContent = str_replace('&', 'e', $this->fileContent);
 
-        $fileContent = str_replace('&', 'e', $fileContent);
-
-        $this->saveFileContent($this->file, $fileContent);
+        $this->saveFileContent();
 
         return $this;
     }
