@@ -39,9 +39,9 @@ class Fix
         file_put_contents($this->file, $this->fileContent);
     }
 
-    public function removeSpecialChars()
+    public function replaceUsingRegex($pattern, $replacement)
     {
-        $this->fileContent = str_replace('&', 'e', $this->fileContent);
+        $this->fileContent = preg_replace($pattern, $replacement, $this->fileContent);
 
         $this->saveFileContent();
 
