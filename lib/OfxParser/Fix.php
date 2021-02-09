@@ -62,5 +62,5 @@ class Fix
     public function normalize($matches)
     {  
         return preg_replace('/\n|\r/', '', $matches[0]);
-    }    
+    }
 }
