@@ -40,18 +40,21 @@ class Fix
     }
 
     public function replaceUsingRegex($pattern, $replacement)
-    { 
-        $normalizePattern = '/(?<=MEMO\>)(.*\n.*)(?=\<\/MEMO)/';
-        $this->fileContent = preg_replace_callback(
-            $normalizePattern,
-            array($this, 'normalize'),
-            $this->fileContent
-        );
-
+    {
         $this->fileContent = preg_replace($pattern, $replacement, $this->fileContent);
-        
 
         $this->saveFileContent();
+
+        return $this;
+    }
+
+    public function replaceUsingRegexCallback($pattern, $function)
+    {
+        $this->fileContent = preg_replace_callback(
+            $pattern,
+            array($this, $function),
+            $this->fileContent
+        );
 
         return $this;
     }
@@ -59,5 +62,5 @@ class Fix
     public function normalize($matches)
     {  
         return preg_replace('/\n|\r/', '', $matches[0]);
-    }
+    }    
 }
