@@ -47,4 +47,20 @@ class Fix
 
         return $this;
     }
+
+    public function replaceUsingRegexCallback($pattern, $function)
+    {
+        $this->fileContent = preg_replace_callback(
+            $pattern,
+            array($this, $function),
+            $this->fileContent
+        );
+
+        return $this;
+    }
+
+    public function normalize($matches)
+    {  
+        return preg_replace('/\n|\r/', '', $matches[0]);
+    }
 }
