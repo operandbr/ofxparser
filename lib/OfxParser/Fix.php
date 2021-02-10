@@ -24,9 +24,19 @@ class Fix
             $this->fileContent
         );
 
-        $this->saveFileContent();
+        return $this;
+    }
+
+    public function setFileContent($fileContent)
+    {
+        $this->fileContent = $fileContent;
 
         return $this;
+    }
+
+    public function getFileContentFromMemory()
+    {
+        return $this->fileContent;
     }
 
     protected function getFileContent()
@@ -43,24 +53,17 @@ class Fix
     {
         $this->fileContent = preg_replace($pattern, $replacement, $this->fileContent);
 
-        $this->saveFileContent();
-
         return $this;
     }
 
-    public function replaceUsingRegexCallback($pattern, $function)
+    public function replaceUsingRegexCallback($pattern, $callback)
     {
         $this->fileContent = preg_replace_callback(
             $pattern,
-            array($this, $function),
+            $callback,
             $this->fileContent
         );
 
         return $this;
-    }
-
-    public function normalize($matches)
-    {  
-        return preg_replace('/\n|\r/', '', $matches[0]);
     }
 }
