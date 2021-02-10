@@ -44,7 +44,7 @@ class Fix
         return file_get_contents($this->file);
     }
 
-    protected function saveFileContent()
+    public function saveFileContent()
     {
         file_put_contents($this->file, $this->fileContent);
     }
