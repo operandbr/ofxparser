@@ -35,6 +35,7 @@ class Parser
      * @param string $ofxContent
      * @return  Ofx
      * @throws \Exception
+     * @see https://www.ofx.net/downloads.html
      */
     public function loadFromString($ofxContent)
     {
@@ -47,6 +48,10 @@ class Parser
         $ofxXml = $this->convertSgmlToXml($ofxSgml);
 
         $xml = $this->xmlLoadString($ofxXml);
+
+        if (empty($xml) || is_null($xml)) {
+            throw new \InvalidArgumentException('Content is not valid ofx schema, please visit https://www.ofx.net/downloads.html and check valid schemas.');
+        }
 
         return new Ofx($xml);
     }
