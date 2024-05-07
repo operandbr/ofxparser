@@ -93,24 +93,39 @@ class Parser
 
     /**
      * Detect any unclosed XML tags - if they exist, close them
-     *
+     * Matches: <SOMETHING>blah
+     * Does not match <SOMETHING> but, will match <DTPOSTED> and <TRNTYPE> specifically
+     * Does not match: <SOMETHING>blah</SOMETHING>
+     * 
      * @param string $line
      * @return string
      */
     private function closeUnclosedXmlTags($line)
     {
-        // Matches: <SOMETHING>blah
-        // Does not match: <SOMETHING>
-        // Does not match: <SOMETHING>blah</SOMETHING>
         $line = str_replace('"', '', $line);
         if (preg_match(
             "/<([A-Za-z0-9.]+)>([\wà-úÀ-Ú0-9\.\-\_\+\, ;:\[\]\'\&\/\\\*\(\)\+\{\|\}\!\£\$\?=@€£#%±§~`]+)$/",
             trim($line),
             $matches
         )) {
-            return "<{$matches[1]}>{$matches[2]}</{$matches[1]}>";
+            $line = "<{$matches[1]}>{$matches[2]}</{$matches[1]}>";
         }
-        return $line;
+
+        $tagsShouldClosed = [
+            'DTPOSTED',
+            'TRNTYPE'
+        ];
+
+        return 
+        preg_replace_callback(
+            "/<(" . implode('|', $tagsShouldClosed) . ")>(?!\w)/", 
+            function($tagMatched) {
+            
+                return "<{$tagMatched[1]}></{$tagMatched[1]}>";
+
+            }, 
+            $line
+        );
     }
 
     /**
@@ -129,6 +144,8 @@ class Parser
         foreach ($lines as $line) {
             $xml .= trim($this->closeUnclosedXmlTags($line)) . "\n";
         }
+
+        echo $xml;
 
         return trim($xml);
     }
