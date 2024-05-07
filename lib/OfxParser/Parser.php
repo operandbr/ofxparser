@@ -145,8 +145,6 @@ class Parser
             $xml .= trim($this->closeUnclosedXmlTags($line)) . "\n";
         }
 
-        echo $xml;
-
         return trim($xml);
     }
 }
