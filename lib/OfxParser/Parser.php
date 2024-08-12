@@ -142,6 +142,11 @@ class Parser
 
         $xml = '';
         foreach ($lines as $line) {
+            if (preg_match('/<\//', $line)) {
+                $xml .= trim($line) . "\n";
+                continue;
+            }
+
             $xml .= trim($this->closeUnclosedXmlTags($line)) . "\n";
         }
 
