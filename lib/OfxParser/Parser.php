@@ -142,8 +142,10 @@ class Parser
 
         $xml = '';
         foreach ($lines as $line) {
-            if (preg_match('/<\//', $line)) {
-                $xml .= trim($line) . "\n";
+            $openingTag = preg_quote(str_replace("/", "", $line), '/');
+            $closingTag = preg_quote($line, '/');
+
+            if (preg_match("/{$openingTag}.*{$closingTag}/", $xml)) {
                 continue;
             }
 
