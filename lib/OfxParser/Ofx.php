@@ -283,6 +283,8 @@ class Ofx
             $dateString = (new \DateTime())->format('Ymd');
         }
 
+        $dateString = $this->fixDate($dateString);
+
         $regex = '/'
             . "(\d{4})(\d{2})(\d{2})?"     // YYYYMMDD             1,2,3
             . "(?:(\d{2})(\d{2})(\d{2}))?" // HHMMSS   - optional  4,5,6
@@ -312,6 +314,29 @@ class Ofx
         }
 
         throw new \RuntimeException('Failed to initialize DateTime for string: ' . $dateString);
+    }
+
+    /**
+     * 
+     * Correct the date format if the day digit does not have a 0 before it, when day < 10
+     * 
+     * @param string $date
+     * @return array|string|null
+     */
+    private function fixDate(string $date) {
+        $onlyDate = explode('[', $date)[0];
+        
+        $fixedDate = $onlyDate;
+        if (strlen($onlyDate) < 14 && strlen($onlyDate) != 8) {
+            $fixedDate = substr_replace($onlyDate, '0', 6, 0);
+        }
+
+        if (strpos($date, '[') !== false) {
+            $timezone = substr($date, strpos($date, '['));
+            $fixedDate .= $timezone;
+        }
+    
+        return $fixedDate;
     }
 
     /**
