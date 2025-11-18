@@ -83,6 +83,16 @@ class Parser
         libxml_clear_errors();
         libxml_use_internal_errors(true);
         $xml = simplexml_load_string($xmlString);
+        $xmlString = preg_replace_callback(
+            '/>([^<]&[^<])</',
+            function ($matches) {
+                $content = $matches[1];
+                // Escapa apenas o necessário e envolve em CDATA
+                return '><![CDATA[' . $content . ']]><';
+            },
+            $xmlString
+        );
+        $xml = simplexml_load_string($xmlString);
 
         if ($errors = libxml_get_errors()) {
             throw new \RuntimeException('Failed to parse OFX: ' . var_export($errors, true));
