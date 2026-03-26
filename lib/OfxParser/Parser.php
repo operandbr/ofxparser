@@ -113,7 +113,9 @@ class Parser
 
         $tagsShouldClosed = [
             'DTPOSTED',
-            'TRNTYPE'
+            'TRNTYPE',
+            'CHECKNUM',
+            'FITID'
         ];
 
         return 
