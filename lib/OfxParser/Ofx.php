@@ -353,6 +353,11 @@ class Ofx
      */
     private function createAmountFromStr($amountString)
     {
+        // Without decimal mark: 3000 or -3000
+        if (preg_match('/^[-+]?\d+$/', $amountString)) {
+            return (float) $amountString;
+        }
+
         // Decimal mark style (UK/US): 000.00 or 0,000.00
         if (preg_match('/^(-|\+)?([\d,]+)(\.?)([\d]{2})$/', $amountString) === 1) {
             return (float)preg_replace(
